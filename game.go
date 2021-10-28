@@ -1,9 +1,21 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+)
 
 type Game struct {
-	board [5][5]int
+	board     [][]int
+	endOfGame bool
+}
+
+func (g Game) numOfRows() int {
+	return len(g.board)
+}
+
+func (g Game) numOfCols() int {
+	return len(g.board[0])
 }
 
 func (g Game) print() {
@@ -15,21 +27,18 @@ func (g Game) print() {
 func (g Game) getNeighbours(col int, row int) int {
 	count := 0
 
-	neighbours := []int{-1, 0, 1}
+	neighbours := [][]int{
+		{-1, -1}, {-1, 0}, {-1, +1},
+		{0, -1}, {0, +1},
+		{+1, -1}, {+1, 0}, {+1, +1},
+	}
 
-	for _, rowMod := range neighbours {
-		for _, colMod := range neighbours {
-			if rowMod == 0 && colMod == 0 {
-				break
-			}
+	for _, neighbour := range neighbours {
+		x := neighbour[0] + row
+		y := neighbour[1] + col
 
-			rowPosition := row + rowMod
-			colPosition := col + colMod
-			if g.isValidPosition(colPosition, rowPosition) {
-				if g.board[rowPosition][colPosition] == 1 {
-					count++
-				}
-			}
+		if g.isValidPosition(y, x) && g.board[x][y] == 1 {
+			count++
 		}
 	}
 
@@ -37,55 +46,45 @@ func (g Game) getNeighbours(col int, row int) int {
 }
 
 func (g Game) isValidPosition(col int, row int) bool {
-	maxRow := len(g.board)
-	maxCol := len(g.board[0])
+	validCol := (col >= 0) && (col < g.numOfCols())
+	validRow := (row >= 0) && (row < g.numOfRows())
 
-	if col < 0 {
-		return false
-	}
-	if col >= maxCol {
-		return false
-	}
-	if row < 0 {
-		return false
-	}
-	if row >= maxRow {
-		return false
-	}
-	return true
+	return validCol && validRow
 }
 
-func isAlive(startState bool, aliveNeighbours int) bool {
+func (g Game) nextStage() Game {
+	newBoard := makeBlankBoard(g.numOfRows(), g.numOfCols())
 
-	if startState {
-		if aliveNeighbours < 2 {
-			return false
-		}
-		if aliveNeighbours > 3 {
-			return false
-		}
-	} else if aliveNeighbours != 3 {
-		return false
-	}
-	return true
+	for row := range g.board {
+		for col := range g.board[0] {
+			aliveNeighbours := g.getNeighbours(col, row)
+			isCurrentCellAlive := g.board[row][col] != 0
 
-}
-
-func (g Game) play() {
-	blackBoard := [5][5]int{}
-
-	for i := range g.board {
-		for j := range g.board {
-			aliveNeighbours := g.getNeighbours(j, i)
-			startState := g.board[j][i] != 0
-			if isAlive(startState, aliveNeighbours) {
-				blackBoard[j][i] = 1
+			if isAlive(isCurrentCellAlive, aliveNeighbours) {
+				newBoard[row][col] = 1
 			}
 		}
 	}
 
-	newBoard := Game{board: blackBoard}
+	newGame := Game{board: newBoard, endOfGame: areBoardsEqual(g.board, newBoard)}
 
-	newBoard.print()
+	return newGame
+}
 
+func isAlive(isCurrentCellAlive bool, aliveNeighbours int) bool {
+	return (isCurrentCellAlive && aliveNeighbours == 2) || (aliveNeighbours == 3)
+}
+
+func makeBlankBoard(numOfRows int, numOfCols int) [][]int {
+	blankBoard := make([][]int, numOfRows)
+
+	for i := range blankBoard {
+		blankBoard[i] = make([]int, numOfCols)
+	}
+
+	return blankBoard
+}
+
+func areBoardsEqual(board1 [][]int, board2 [][]int) bool {
+	return reflect.DeepEqual(board1, board2)
 }

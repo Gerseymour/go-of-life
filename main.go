@@ -3,18 +3,23 @@ package main
 import "fmt"
 
 func main() {
+	game := Game{board: board}
 
-	board := [5][5]int{
-		{0, 0, 0, 0, 0},
-		{0, 0, 1, 0, 0},
-		{1, 0, 1, 0, 0},
-		{0, 1, 1, 0, 0},
-		{0, 0, 0, 0, 0},
+	fmt.Println("Initial Board")
+	game.print()
+
+	for i := 1; i != 0; i++ {
+		game = game.nextStage()
+		fmt.Printf("\nBoard %d:\n", i)
+		game.print()
+
+		if game.endOfGame {
+			fmt.Println("The Game of Life has ended!")
+			return
+		}
+
+		fmt.Println("Press Enter to continue to next stage:")
+		fmt.Scanln()
+
 	}
-
-	gol := Game{board: board}
-	gol.print()
-	fmt.Println("new board ")
-	gol.play()
-
 }

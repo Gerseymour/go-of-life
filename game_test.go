@@ -7,21 +7,18 @@ import (
 )
 
 func TestGetNeighbours(t *testing.T) {
-	board := [5][5]int{
+	testgol := Game{board: [][]int{
 		{0, 0, 0, 0, 0},
 		{0, 0, 1, 0, 0},
 		{1, 0, 1, 0, 0},
 		{0, 1, 1, 0, 0},
 		{0, 0, 0, 0, 0},
-	}
-
-	testgol := Game{board: board}
+	}}
 
 	result1 := testgol.getNeighbours(3, 2)
 	result2 := testgol.getNeighbours(1, 2)
 	result3 := testgol.getNeighbours(0, 4)
 	result4 := testgol.getNeighbours(4, 0)
-
 	assert.Equal(t, 3, result1, "They should be equal!")
 	assert.Equal(t, 5, result2, "They should be equal!")
 	assert.Equal(t, 1, result3, "They should be equal!")
@@ -30,15 +27,13 @@ func TestGetNeighbours(t *testing.T) {
 }
 
 func TestValidPosition(t *testing.T) {
-	board := [5][5]int{
+	testgol := Game{board: [][]int{
 		{0, 0, 0, 0, 0},
 		{0, 0, 1, 0, 0},
 		{1, 0, 1, 0, 0},
 		{0, 1, 1, 0, 0},
 		{0, 0, 0, 0, 0},
-	}
-
-	testgol := Game{board: board}
+	}}
 
 	result1 := testgol.isValidPosition(0, 0)
 	result2 := testgol.isValidPosition(-1, 0)
@@ -51,11 +46,9 @@ func TestValidPosition(t *testing.T) {
 	assert.False(t, result3)
 	assert.False(t, result4)
 	assert.False(t, result5)
-
 }
 
 func TestIsAlive(t *testing.T) {
-
 	result1 := isAlive(true, 1)
 	result2 := isAlive(true, 0)
 	result3 := isAlive(true, 2)
@@ -75,5 +68,4 @@ func TestIsAlive(t *testing.T) {
 	assert.False(t, result7)
 	assert.False(t, result8)
 	assert.True(t, result9)
-
 }
