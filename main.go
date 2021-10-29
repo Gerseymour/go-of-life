@@ -10,6 +10,7 @@ func main() {
 
 	for i := 1; i != 0; i++ {
 		game = game.nextStage()
+
 		fmt.Printf("\nBoard %d:\n", i)
 		game.print()
 
@@ -20,6 +21,5 @@ func main() {
 
 		fmt.Println("Press Enter to continue to next stage:")
 		fmt.Scanln()
-
 	}
 }
